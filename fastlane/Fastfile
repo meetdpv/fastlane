@@ -1,0 +1,65 @@
+# This file contains the fastlane.tools configuration
+# You can find the documentation at https://docs.fastlane.tools
+#
+# For a list of all available actions, check out
+#
+#     https://docs.fastlane.tools/actions
+#
+# For a list of all available plugins, check out
+#
+#     https://docs.fastlane.tools/plugins/available-plugins
+#
+
+# Uncomment the line if you want fastlane to automatically update itself
+# update_fastlane
+
+default_platform(:android)
+
+platform :android do
+  desc "Runs all the tests"
+  lane :release do |options|
+    gradle(
+      task: "assemble",
+      build_type: "Release",
+      print_command: false,
+      properties: {
+        "android.injected.signing.store.file" => options[:KEYSTORE],
+        "android.injected.signing.store.password" => options[:STORE_PASSWORD],
+        "android.injected.signing.key.alias" => options[:KEY_ALIAS],
+        "android.injected.signing.key.password" => options[:KEY_PASSWORD],
+      }
+    )
+  end
+
+  desc "Runs all the debug"
+    lane :debug do
+    increment_version_code
+      gradle(
+        task: "assemble",
+        build_type: "Debug",
+        print_command: false,
+        properties: {
+          "android.injected.signing.store.file" => "keystore/debug",
+          "android.injected.signing.store.password" => "123456",
+          "android.injected.signing.key.alias" => "debug",
+          "android.injected.signing.key.password" => "123456",
+        }
+      )
+    end
+
+    desc "Runs all the debug"
+        lane :develop do
+        increment_version_code
+          gradle(
+            task: "assemble",
+            build_type: "Debug",
+            print_command: false,
+            properties: {
+              "android.injected.signing.store.file" => "keystore/debug",
+              "android.injected.signing.store.password" => "123456",
+              "android.injected.signing.key.alias" => "debug",
+              "android.injected.signing.key.password" => "123456",
+            }
+          )
+        end
+end
